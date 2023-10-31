@@ -38,8 +38,11 @@ app.get("/urls/:id", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
-// req.params.id[id]
+
 app.post("/urls", (req, res) => {
+  const id = generateRandomString();
+  urlDatabase[id] = req.body.longURL;
+  // console.log(urlDatabase);
   console.log(req.body); // Log the POST request body to the console
   res.send("Ok"); // Respond with 'Ok' (we will replace this)
 });
