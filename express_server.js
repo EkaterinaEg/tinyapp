@@ -58,7 +58,7 @@ app.listen(PORT, () => {
 });
 
 
-function generateRandomString() {
+
   function generateRandomString() {
     const characters = 'abcdefghijklmnopqrstuvwxyzZ0123456789ABCDEFGHIJKLMNOPQRSTUVWXY';
     let shortUrl = [];
@@ -71,5 +71,5 @@ function generateRandomString() {
   
   
   }
-}
+
 
