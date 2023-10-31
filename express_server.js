@@ -57,6 +57,11 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${id}`);
 
 });
+// Delete url
+app.post("/urls/:id/delete", (req, res) => {
+  delete urlDatabase[req.params.id]
+  res.redirect('/urls');
+});
 
 
 app.listen(PORT, () => {
@@ -66,7 +71,7 @@ app.listen(PORT, () => {
 
 //generate random id
   function generateRandomString() {
-    const result = Math.random().toString(36).substring(8)//set of [0-9,A-Z]
+    const result = Math.random().toString(36).substring(5)//set of [0-9,A-Z]
     return result
  
   }
