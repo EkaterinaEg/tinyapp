@@ -99,7 +99,6 @@ app.post('/logout', (req, res) => {
   res.redirect('/urls');
 });
 
-
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
