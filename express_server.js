@@ -6,6 +6,9 @@ const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
+
+
+
 app.use(express.urlencoded({ extended: true }));
 
 
@@ -53,3 +56,20 @@ app.set("view engine", "ejs");
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
+
+
+function generateRandomString() {
+  function generateRandomString() {
+    const characters = 'abcdefghijklmnopqrstuvwxyzZ0123456789ABCDEFGHIJKLMNOPQRSTUVWXY';
+    let shortUrl = [];
+    for (let i = 0; i < 6; i++) {
+      shortUrl.push(Math.floor(Math.random() * characters.length))
+  
+    }
+  
+  return shortUrl.map(el => characters.charAt(el)).join("")
+  
+  
+  }
+}
+
