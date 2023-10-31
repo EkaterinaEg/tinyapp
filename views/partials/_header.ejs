@@ -18,20 +18,29 @@
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
       </div>
     </div>
-    <form  method="POST" action="/login" style="margin: 0 auto">
-      <div class="form-group mb-2 d-flex justify-content-end align-items-center">
-        <label class= "mb-0" for="username"></label>
-        <input class="form-control" 
-        type="text" name="username" 
-        placeholder="Username" 
-        style="width: 300px; margin: 20px"
-        />
-        <button class="btn border border-dark" type="submit">Login</button>
-      </div>
-    </form>
-    <div>
-      <p class="header__username m-2 fs-3" style="font-size: 24px"><%= username %></p>
-    </div>
+      <% if(!username){ %>
+        <form  method="POST" action="/login" style="margin: 0 auto">
+        <div class="form-group mb-2 d-flex justify-content-end align-items-center">
+          <label class= "mb-0" for="username"></label>
+          <input class="form-control" 
+          type="text" name="username" 
+          placeholder="Username" 
+          style="width: 300px; margin: 20px"
+          />
+          <button class="btn border border-dark" type="submit">Login</button>
+        </div>
+      </form>
+      <% } else{ %>
+        <form  method="POST" action="/logout">  
+        <div class="d-flex">
+          <p class="header__username m-3">Logged in as: <b><%= username %>!</b></p>
+          <button class="btn border border-dark" type="submit">Logout</button>
+        </div>
+        </form>
+     <% } %>
+
+
+
   </nav>
 
 </header>
