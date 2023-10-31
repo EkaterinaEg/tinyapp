@@ -62,9 +62,9 @@ app.post("/urls/:id/delete", (req, res) => {
   delete urlDatabase[req.params.id]
   res.redirect('/urls');
 });
-app.get("/urls/:id/delete", (req, res) => {
-  res.redirect(`/urls`)
-});
+// app.get("/urls/:id/delete", (req, res) => {
+//   res.redirect('/urls')
+// });
 
 
 // Edit
@@ -73,22 +73,19 @@ app.get("/urls/:id/delete", (req, res) => {
 //   res.render("urls_show", templateVars);
 
 // });
-app.get("/urls/:id/edit", (req, res) => {
-  const id = req.params.id;
-  const newLongURL = req.body.UpdatedlongURL;
+// app.get("/urls/:id/edit", (req, res) => {
+//   const id = req.params.id;
+//   const newLongURL = req.body.UpdatedlongURL;
  
-  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id] };
-  res.render("urls_show", templateVars);
-});
+//   const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id] };
+//   res.render("urls_show", templateVars);
+// });
 
-app.post("/urls/:id/edit", (req, res) => {
+app.post("/urls/:id", (req, res) => {
   const id = req.params.id;
   const newLongURL = req.body.UpdatedlongURL;
   urlDatabase[id] = newLongURL;
-  // const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id] };
-    const templateVars = { id: req.params.id, longURL:newLongURL };
-  res.render("urls_show", templateVars);
-res.redirect(`/urls`)
+  res.redirect("/urls");
 
 });
 
