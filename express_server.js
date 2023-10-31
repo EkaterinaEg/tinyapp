@@ -1,4 +1,5 @@
 const express = require('express');
+const cookieParser = require('cookie-parser');
 const app = express();
 const PORT = 8080;
 
@@ -7,8 +8,16 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+//generate random id
+const generateRandomString = () => {
+  const result = Math.random().toString(36).substring(5);//set of [0-9,A-Z]
+  return result;
+ 
+};
+
 // config
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser()); // to get username from cookies
 app.set("view engine", "ejs");
 
 
@@ -26,29 +35,33 @@ app.get("/urls.json", (req, res) => {
 app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
-
-// route to urls using templates
+// upload urls page
 app.get("/urls", (req, res) => {
-  const templateVars = { urls: urlDatabase };
+  const templateVars = {
+    username: req.cookies["username"],
+    urls: urlDatabase
+  };
   res.render("urls_index", templateVars);
 });
-
-// get request to new form
+// get request to new form (create new link)
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  const templateVars = { username: req.cookies["username"] };
+  res.render("urls_new", templateVars);
 });
 
-//get single link from url  database
+//get single link from url database
 app.get("/urls/:id", (req, res) => {
-  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id] };
+  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id],  username: req.cookies["username"] };
   res.render("urls_show", templateVars);
 });
 
 // using shortURL go to longURL
 app.get("/u/:id", (req, res) => {
-  const longURL = urlDatabase[req.params.id]
+  const longURL = urlDatabase[req.params.id];
   res.redirect(longURL);
 });
+
+// _______________________________________POST requests
 
 // add new link to urlDatabase(handle form submit)
 app.post("/urls", (req, res) => {
@@ -57,48 +70,36 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${id}`);
 
 });
-// Delete url
-app.post("/urls/:id/delete", (req, res) => {
-  delete urlDatabase[req.params.id]
-  res.redirect('/urls');
-});
-// app.get("/urls/:id/delete", (req, res) => {
-//   res.redirect('/urls')
-// });
 
-
-// Edit
-// app.get("/urls/:id/edit", (req, res) => {
-//   const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id] };
-//   res.render("urls_show", templateVars);
-
-// });
-// app.get("/urls/:id/edit", (req, res) => {
-//   const id = req.params.id;
-//   const newLongURL = req.body.UpdatedlongURL;
- 
-//   const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id] };
-//   res.render("urls_show", templateVars);
-// });
-
+// Edit url
 app.post("/urls/:id", (req, res) => {
   const id = req.params.id;
   const newLongURL = req.body.UpdatedlongURL;
   urlDatabase[id] = newLongURL;
-  res.redirect("/urls");
-
+  res.redirect('/urls');
+  
 });
+// Delete url
+app.post("/urls/:id/delete", (req, res) => {
+  delete urlDatabase[req.params.id];
+  res.redirect('/urls');
+});
+
+// login
+app.post('/login', (req, res) => {
+  const username = req.body.username;
+  res.cookie("username", username);
+  res.redirect('/urls');
+});
+
+// logout
+app.post('/logout', (req, res) => {
+  const username = req.body.username;
+  res.clearCookie("username", username);
+  res.redirect('/urls');
+});
+
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
-
-
-//generate random id
-  function generateRandomString() {
-    const result = Math.random().toString(36).substring(5)//set of [0-9,A-Z]
-    return result
- 
-  }
-
-
