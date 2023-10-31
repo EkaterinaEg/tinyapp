@@ -63,7 +63,7 @@ app.post("/urls/:id/delete", (req, res) => {
   res.redirect('/urls');
 });
 app.get("/urls/:id/delete", (req, res) => {
-  res.redirect(`/urls`)
+  res.redirect('/urls')
 });
 
 
@@ -88,9 +88,15 @@ app.post("/urls/:id/edit", (req, res) => {
   // const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id] };
     const templateVars = { id: req.params.id, longURL:newLongURL };
   res.render("urls_show", templateVars);
-res.redirect(`/urls`)
+res.redirect('/urls')
 
 });
+
+app.post('/login', (req, res) => {
+  const username = req.body.username;
+  res.cookie("username", username);
+  res.redirect('/urls')
+})
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
