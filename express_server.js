@@ -1,5 +1,5 @@
 const express = require('express');
-const cookieParser = require('cookie-parser')
+const cookieParser = require('cookie-parser');
 const app = express();
 const PORT = 8080;
 
@@ -8,9 +8,16 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+//generate random id
+const generateRandomString = () => {
+  const result = Math.random().toString(36).substring(5);//set of [0-9,A-Z]
+  return result;
+ 
+};
+
 // config
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser())
+app.use(cookieParser()); // to get username from cookies
 app.set("view engine", "ejs");
 
 
@@ -43,17 +50,17 @@ app.get("/urls/:id", (req, res) => {
 
 // using shortURL go to longURL
 app.get("/u/:id", (req, res) => {
-  const longURL = urlDatabase[req.params.id]
+  const longURL = urlDatabase[req.params.id];
   res.redirect(longURL);
 });
 // upload urls page
 app.get("/urls", (req, res) => {
   const templateVars = {
     username: req.cookies["username"],
-    urls: urlDatabase 
+    urls: urlDatabase
   };
   res.render("urls_index", templateVars);
- });
+});
 // _______________________________________POST requests
 
 // add new link to urlDatabase(handle form submit)
@@ -69,12 +76,12 @@ app.post("/urls/:id", (req, res) => {
   const id = req.params.id;
   const newLongURL = req.body.UpdatedlongURL;
   urlDatabase[id] = newLongURL;
-  res.redirect('/urls')
+  res.redirect('/urls');
   
 });
 // Delete url
 app.post("/urls/:id/delete", (req, res) => {
-  delete urlDatabase[req.params.id]
+  delete urlDatabase[req.params.id];
   res.redirect('/urls');
 });
 
@@ -82,15 +89,15 @@ app.post("/urls/:id/delete", (req, res) => {
 app.post('/login', (req, res) => {
   const username = req.body.username;
   res.cookie("username", username);
-  res.redirect('/urls')
-})
+  res.redirect('/urls');
+});
 
 // logout
 app.post('/logout', (req, res) => {
   const username = req.body.username;
   res.clearCookie("username", username);
-  res.redirect('/urls')
-})
+  res.redirect('/urls');
+});
 
 
 app.listen(PORT, () => {
@@ -98,11 +105,6 @@ app.listen(PORT, () => {
 });
 
 
-//generate random id
-  function generateRandomString() {
-    const result = Math.random().toString(36).substring(5)//set of [0-9,A-Z]
-    return result
- 
-  }
+
 
 
