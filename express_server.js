@@ -85,13 +85,13 @@ app.post("/urls/:id/edit", (req, res) => {
   const id = req.params.id;
   const newLongURL = req.body.UpdatedlongURL;
   urlDatabase[id] = newLongURL;
-  // const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id] };
-    const templateVars = { id: req.params.id, longURL:newLongURL };
+  const templateVars = { id: req.params.id, longURL:newLongURL };
   res.render("urls_show", templateVars);
-res.redirect('/urls')
-
+  res.redirect('/urls')
+  
 });
 
+// const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id] };
 app.post('/login', (req, res) => {
   const username = req.body.username;
   res.cookie("username", username);
