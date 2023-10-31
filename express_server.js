@@ -62,7 +62,35 @@ app.post("/urls/:id/delete", (req, res) => {
   delete urlDatabase[req.params.id]
   res.redirect('/urls');
 });
+app.get("/urls/:id/delete", (req, res) => {
+  res.redirect(`/urls`)
+});
 
+
+// Edit
+// app.get("/urls/:id/edit", (req, res) => {
+//   const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id] };
+//   res.render("urls_show", templateVars);
+
+// });
+app.get("/urls/:id/edit", (req, res) => {
+  const id = req.params.id;
+  const newLongURL = req.body.UpdatedlongURL;
+ 
+  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id] };
+  res.render("urls_show", templateVars);
+});
+
+app.post("/urls/:id/edit", (req, res) => {
+  const id = req.params.id;
+  const newLongURL = req.body.UpdatedlongURL;
+  urlDatabase[id] = newLongURL;
+  // const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id] };
+    const templateVars = { id: req.params.id, longURL:newLongURL };
+  res.render("urls_show", templateVars);
+res.redirect(`/urls`)
+
+});
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
