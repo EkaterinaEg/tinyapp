@@ -8,6 +8,19 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+const users = {
+  userRandomID: {
+    id: "userRandomID",
+    email: "user@example.com",
+    password: "purple-monkey-dinosaur",
+  },
+  user2RandomID: {
+    id: "user2RandomID",
+    email: "user2@example.com",
+    password: "dishwasher-funk",
+  },
+};
+
 //generate random id
 const generateRandomString = () => {
   const result = Math.random().toString(36).substring(5);//set of [0-9,A-Z]
@@ -55,6 +68,7 @@ app.get("/urls/:id", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
+// Get request to register form
 app.get("/register", (req, res) => {
   const templateVars = { username: req.cookies["username"] };
   res.render("urls_registration", templateVars);
@@ -107,17 +121,20 @@ app.post('/logout', (req, res) => {
 });
 
 
-// register
-// app.post('/register', (req, res) => {
-//   const email = req.body.email;
-//   const password = req.body.password;
-//   res.cookie("email", email);
-//   res.cookie("password", password);
-//   res.redirect('/urls');
-// });
+// Register
+app.post('/register', (req, res) => {
+  const id = generateRandomString();
+  const email = req.body.email;
+  const password = req.body.password;
+  users[id] = {id: id, email: email, password: password };
+ 
+  
+  res.cookie("user_id", id);
+  res.cookie("email", email);
+  res.cookie("password", password);
 
-
-
+  res.redirect('/urls');
+});
 
 
 app.listen(PORT, () => {
