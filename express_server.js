@@ -55,11 +55,18 @@ app.get("/urls/:id", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
+app.get("/register", (req, res) => {
+  const templateVars = { username: req.cookies["username"] };
+  res.render("urls_registration", templateVars);
+});
+
 // using shortURL go to longURL
 app.get("/u/:id", (req, res) => {
   const longURL = urlDatabase[req.params.id];
   res.redirect(longURL);
 });
+
+
 
 // _______________________________________POST requests
 
@@ -98,6 +105,20 @@ app.post('/logout', (req, res) => {
   res.clearCookie("username", username);
   res.redirect('/urls');
 });
+
+
+// register
+// app.post('/register', (req, res) => {
+//   const email = req.body.email;
+//   const password = req.body.password;
+//   res.cookie("email", email);
+//   res.cookie("password", password);
+//   res.redirect('/urls');
+// });
+
+
+
+
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
