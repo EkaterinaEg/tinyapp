@@ -1,6 +1,7 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const app = express();
+const morgan = require("morgan");
 const PORT = 8080;
 
 const urlDatabase = {
@@ -12,12 +13,12 @@ const users = {
   userRandomID: {
     id: "userRandomID",
     email: "user@example.com",
-    password: "purple-monkey-dinosaur",
+    password: "qaz",
   },
   user2RandomID: {
     id: "user2RandomID",
     email: "user2@example.com",
-    password: "dishwasher-funk",
+    password: "123",
   },
 };
 
@@ -30,18 +31,15 @@ const generateRandomString = () => {
 const getUserByEmail = function(email) {  
   for(let key in users) {
     if(users[key].email === email) {
-      console.log(users[key].email);
-      return users[key]
+         return users[key]
     }
-  
- 
   }
   return null
 }
 
 // config
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser()); // to get username from cookies
+app.use(cookieParser()); // to get data from cookies
 app.set("view engine", "ejs");
 
 
@@ -59,15 +57,13 @@ app.get("/urls.json", (req, res) => {
 app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
+
 // upload urls page
 app.get("/urls", (req, res) => {
   const id = req.cookies.user_id;
-
   const user = users[id]
-  // console.log(users[req.cookies.user_id]);
-  // console.log(users[id]);
   const templateVars = {
-    user : user,
+    user: user,
     urls: urlDatabase
   };
 
@@ -75,33 +71,35 @@ app.get("/urls", (req, res) => {
 });
 // get request to new form (create new link)
 app.get("/urls/new", (req, res) => {
-  // const templateVars = { username: req.cookies["username"] };
-  const user = users[req.cookies.user_id]
-  const templateVars = {
-    user
+  const id = req.cookies.user_id;
+  const user = users[id]
+    const templateVars = {
+      user: user
   };
   res.render("urls_new", templateVars);
 });
 
 //get single link from url database
 app.get("/urls/:id", (req, res) => {
-  const user = users[req.cookies.user_id]
-  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id],  user };
+  const id = req.cookies.user_id;
+  const user = users[id]  
+  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id], user: user};
   res.render("urls_show", templateVars);
 });
 
 // Get request to register form
 app.get("/register", (req, res) => {
-  const user = users[req.cookies.user_id]
+  const id = req.cookies.user_id;
+  const user = users[id]  
   const templateVars = { user };
   res.render("urls_registration", templateVars);
 });
 
 // Get request to login form
 app.get("/login", (req, res) => {
-  const email = users[req.cookies.email]
-  const password = users[req.cookies.email]
-  const templateVars = { email, password };
+  const id = req.cookies.user_id;
+  const user = users[id]  
+  const templateVars = { user };
   res.render("urls_login", templateVars);
 });
 
@@ -139,30 +137,28 @@ app.post("/urls/:id/delete", (req, res) => {
 
 // login
 app.post('/login', (req, res) => {
-  const id = generateRandomString();
+  const id = generateRandomString()
   const email = req.body.email;
   const password = req.body.password;
-   
+
+  if(email === "" || password === "") { 
+    return res.status(403).send("E-mail or password are empty")
+  }
+
+  const userExists = getUserByEmail(email)
+
+  if(userExists === null) { 
+    return res.status(403).send('User was not found')
+  }
+  if(password !== userExists.password) {
+    return res.status(403).send('Password is incorrect')
+  }
+
   users[id] = {id: id, email: email, password: password };
+
   res.cookie("user_id", id);
   res.cookie("email", email);
   res.cookie("password", password);
-
-  res.redirect('/urls');
-  // const user = users[req.cookies.user_id]
-  // if(email === "" || password === "") {
-  //   return res.send('400 status code: e-mail or password are empty')
-  // }
-
-  // const userExists = getUserByEmail(email)
-
-  // if(userExists !== null) {
-  //   return res.send('400 status code: e-mail already exists')
-  // }
-  // const templateVars = { email, password };
-
-  // res.cookie("email", email);  
-  // res.cookie("password", password);
   res.redirect('/urls');
 });
 
@@ -173,16 +169,12 @@ app.post('/logout', (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
 
-  const user = users[req.cookies.user_id]
-  // const templateVars = { user };
-    res.clearCookie("user_id", user_id);
-    res.clearCookie("email", email);
-    res.clearCookie("password", password);
+  res.clearCookie("user_id", user_id);
+  res.clearCookie("email", email);
+  res.clearCookie("password", password);
 
-  res.redirect('/urls');
+  res.redirect('/login');
 });
-
-
 
 // Register
 app.post('/register', (req, res) => {
@@ -191,15 +183,14 @@ app.post('/register', (req, res) => {
   const password = req.body.password;
 
   if(email === "" || password === "") {
-    return res.send('400 status code: e-mail or password are empty')
+    return res.status(400).send('E-mail or password are empty')
   }
 
   const userExists = getUserByEmail(email)
 
   if(userExists !== null) {
-    return res.send('400 status code: e-mail already exists')
+    return res.status(400).send('E-mail already exists')
   }
-  
  
   users[id] = {id: id, email: email, password: password };
   res.cookie("user_id", id);
