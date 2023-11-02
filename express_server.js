@@ -234,8 +234,7 @@ app.post("/urls/:id/delete", (req, res) => {
 
 // login
 app.post('/login', (req, res) => {
-  const id = 'aJ4';
-  // const id = generateRandomString()
+  const id = generateRandomString()
   const email = req.body.email;
   const password = req.body.password;
   // const hashedPassword = bcrypt.hashSync(password, 10);
