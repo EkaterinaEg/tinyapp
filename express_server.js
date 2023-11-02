@@ -50,27 +50,39 @@ app.get("/hello", (req, res) => {
 });
 // upload urls page
 app.get("/urls", (req, res) => {
+  const id = req.cookies.user_id;
+
+  const user = users[id]
+  // console.log(users[req.cookies.user_id]);
+  // console.log(users[id]);
   const templateVars = {
-    username: req.cookies["username"],
+    user : user,
     urls: urlDatabase
   };
+
   res.render("urls_index", templateVars);
 });
 // get request to new form (create new link)
 app.get("/urls/new", (req, res) => {
-  const templateVars = { username: req.cookies["username"] };
+  // const templateVars = { username: req.cookies["username"] };
+  const user = users[req.cookies.user_id]
+  const templateVars = {
+    user
+  };
   res.render("urls_new", templateVars);
 });
 
 //get single link from url database
 app.get("/urls/:id", (req, res) => {
-  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id],  username: req.cookies["username"] };
+  const user = users[req.cookies.user_id]
+  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id],  user };
   res.render("urls_show", templateVars);
 });
 
 // Get request to register form
 app.get("/register", (req, res) => {
-  const templateVars = { username: req.cookies["username"] };
+  const user = users[req.cookies.user_id]
+  const templateVars = { user };
   res.render("urls_registration", templateVars);
 });
 
@@ -108,17 +120,25 @@ app.post("/urls/:id/delete", (req, res) => {
 
 // login
 app.post('/login', (req, res) => {
-  const username = req.body.username;
+  // const user = users[req.cookies.user_id]
+  // const templateVars = { user };
+  const username = req.body.username
   res.cookie("username", username);
   res.redirect('/urls');
 });
 
+
 // logout
 app.post('/logout', (req, res) => {
-  const username = req.body.username;
-  res.clearCookie("username", username);
+  // const username = req.body.username;
+  // res.clearCookie("username", username);
+  const user = users[req.cookies.user_id]
+  const templateVars = { user };
+    // res.clearCookie("username", username);
+    
   res.redirect('/urls');
 });
+
 
 
 // Register
@@ -132,7 +152,6 @@ app.post('/register', (req, res) => {
   res.cookie("user_id", id);
   res.cookie("email", email);
   res.cookie("password", password);
-
   res.redirect('/urls');
 });
 
