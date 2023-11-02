@@ -28,7 +28,7 @@ const generateRandomString = () => {
   return result;
  };
 
-const getUserByEmail = function(email) {  
+const getUserByEmail = function(email) {
   for(let key in users) {
     if(users[key].email === email) {
          return users[key]
@@ -41,6 +41,7 @@ const getUserByEmail = function(email) {
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser()); // to get data from cookies
 app.set("view engine", "ejs");
+app.use(morgan('combined'))
 
 
 // get request to /
@@ -61,18 +62,22 @@ app.get("/hello", (req, res) => {
 // upload urls page
 app.get("/urls", (req, res) => {
   const id = req.cookies.user_id;
-  const user = users[id]
+  const user = users[id];
+
   const templateVars = {
     user: user,
     urls: urlDatabase
   };
-
   res.render("urls_index", templateVars);
 });
 // get request to new form (create new link)
 app.get("/urls/new", (req, res) => {
   const id = req.cookies.user_id;
   const user = users[id]
+  if(!user) {
+    return res.redirect('/login');
+  
+  }
     const templateVars = {
       user: user
   };
@@ -91,6 +96,9 @@ app.get("/urls/:id", (req, res) => {
 app.get("/register", (req, res) => {
   const id = req.cookies.user_id;
   const user = users[id]  
+  if(user) {
+    return res.redirect('/urls');
+  }
   const templateVars = { user };
   res.render("urls_registration", templateVars);
 });
@@ -98,7 +106,10 @@ app.get("/register", (req, res) => {
 // Get request to login form
 app.get("/login", (req, res) => {
   const id = req.cookies.user_id;
-  const user = users[id]  
+  const user = users[id];
+  if(user) {
+    return res.redirect('/urls');
+  }
   const templateVars = { user };
   res.render("urls_login", templateVars);
 });
@@ -106,6 +117,9 @@ app.get("/login", (req, res) => {
 // using shortURL go to longURL
 app.get("/u/:id", (req, res) => {
   const longURL = urlDatabase[req.params.id];
+  if(!longURL) {
+    return res.send("This id does not exist")
+  }
   res.redirect(longURL);
 });
 
@@ -115,9 +129,14 @@ app.get("/u/:id", (req, res) => {
 
 // add new link to urlDatabase(handle form submit)
 app.post("/urls", (req, res) => {
-  const id = generateRandomString();
-  urlDatabase[id] = req.body.longURL;
-  res.redirect(`/urls/${id}`);
+  const id = req.cookies.user_id;
+  const user = users[id];
+  if(!user) {
+    return res.send('Please, login before adding!!!');
+  }
+  const urlId = generateRandomString();
+  urlDatabase[urlId] = req.body.longURL;
+  res.redirect(`/urls/${urlId}`);
 
 });
 
@@ -146,7 +165,6 @@ app.post('/login', (req, res) => {
   }
 
   const userExists = getUserByEmail(email)
-
   if(userExists === null) { 
     return res.status(403).send('User was not found')
   }
@@ -159,6 +177,7 @@ app.post('/login', (req, res) => {
   res.cookie("user_id", id);
   res.cookie("email", email);
   res.cookie("password", password);
+
   res.redirect('/urls');
 });
 
