@@ -35,14 +35,6 @@ const urlDatabase = {
 };
 
 
-// const pass1 = 'qaz';
-// const pass2 = bcrypt.hashSync(pass1, 10);
-// console.log(pass2);
-// const comp = bcrypt.compareSync(pass1, pass2);
-
-// console.log(comp); 
-
-
 const users = {
   userRandomID: {
     id: "aJ4",//for testing purposes
@@ -89,7 +81,6 @@ app.set("view engine", "ejs");
 
 // middleware
 app.use(express.urlencoded({ extended: true })); // creates req.body
-// app.use(cookieParser()); // to get data from cookies
 
 app.use(morgan('combined'))
 
@@ -276,9 +267,6 @@ app.post('/login', (req, res) => {
   req.session.userId = id; 
   req.session.email = email; 
   req.session.password = userExists.password; 
-  // res.cookie("userId", id);
-  // res.cookie("email", email);
-  // res.cookie("password", userExists.password);
 
   res.redirect('/urls');
 });
@@ -291,9 +279,7 @@ app.post('/logout', (req, res) => {
   const password = req.body.password;
 
   req.session = null
-  // res.clearCookie("userId", userId);
-  // res.clearCookie("email", email);
-  // res.clearCookie("password", password);
+
 
   res.redirect('/login');
 });
