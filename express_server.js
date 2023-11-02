@@ -97,6 +97,14 @@ app.get("/register", (req, res) => {
   res.render("urls_registration", templateVars);
 });
 
+// Get request to login form
+app.get("/login", (req, res) => {
+  const email = users[req.cookies.email]
+  const password = users[req.cookies.email]
+  const templateVars = { email, password };
+  res.render("urls_login", templateVars);
+});
+
 // using shortURL go to longURL
 app.get("/u/:id", (req, res) => {
   const longURL = urlDatabase[req.params.id];
@@ -131,21 +139,45 @@ app.post("/urls/:id/delete", (req, res) => {
 
 // login
 app.post('/login', (req, res) => {
+  const id = generateRandomString();
+  const email = req.body.email;
+  const password = req.body.password;
+   
+  users[id] = {id: id, email: email, password: password };
+  res.cookie("user_id", id);
+  res.cookie("email", email);
+  res.cookie("password", password);
+
+  res.redirect('/urls');
   // const user = users[req.cookies.user_id]
-  // const templateVars = { user };
-  const username = req.body.username
-  res.cookie("username", username);
+  // if(email === "" || password === "") {
+  //   return res.send('400 status code: e-mail or password are empty')
+  // }
+
+  // const userExists = getUserByEmail(email)
+
+  // if(userExists !== null) {
+  //   return res.send('400 status code: e-mail already exists')
+  // }
+  // const templateVars = { email, password };
+
+  // res.cookie("email", email);  
+  // res.cookie("password", password);
   res.redirect('/urls');
 });
 
 
 // logout
 app.post('/logout', (req, res) => {
-  // const username = req.body.username;
-  // res.clearCookie("username", username);
+  const user_id = req.body.user_id;
+  const email = req.body.email;
+  const password = req.body.password;
+
   const user = users[req.cookies.user_id]
-  const templateVars = { user };
-    // res.clearCookie("username", username);
+  // const templateVars = { user };
+    res.clearCookie("user_id", user_id);
+    res.clearCookie("email", email);
+    res.clearCookie("password", password);
 
   res.redirect('/urls');
 });

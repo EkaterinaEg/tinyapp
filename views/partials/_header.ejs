@@ -18,26 +18,31 @@
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
       </div>
     </div>
-      <% if(!user){ %>
-        <form  method="POST" action="/login" style="margin: 0 auto">
-        <div class="form-group mb-2 d-flex justify-content-end align-items-center">
-          <label class= "mb-0" for="username"></label>
-          <input class="form-control" 
-          type="text" name="username" 
-          placeholder="Username" 
-          style="width: 300px; margin: 20px"
-          />
-          <button class="btn border border-dark" type="submit">Login</button>
-        </div>
-      </form>
-      <% } else{ %>
+      <% if(user){ %>
         <form  method="POST" action="/logout">  
-        <div class="d-flex">
-          <p class="header__username m-3">Logged in as: <b><%= user.email %>!</b></p>
-          <button class="btn border border-dark" type="submit">Logout</button>
-        </div>
-        </form>
-     <% } %>
+          <div class="d-flex">
+            <p class="header__username m-3">Logged in as: <b><%= user.email %>!</b></p>
+            <button class="btn border border-dark" type="submit">Logout</button>
+          </div>
+          </form>
+        
+      <% } else{ %>
+        <div class="d-flex g-3">
+        <a href="/login" class="text-light mr-3">Click here to Login</a>
+        <a href="/register" class="text-light">Click here to Register</a>
+      </div>
+        <!-- <form  method="POST" action="GET" style="margin: 0 auto">
+          <div class="form-group mb-2 d-flex justify-content-end align-items-center">
+            <label class= "mb-0" for="username"></label>
+            <input class="form-control" 
+            type="text" name="username" 
+            placeholder="Username" 
+            style="width: 300px; margin: 20px"
+            />
+            <button class="btn border border-dark" type="submit">Login</button>
+          </div>
+        </form> -->
+     <% } %> 
 
 
 
