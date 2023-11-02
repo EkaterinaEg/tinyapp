@@ -7,6 +7,7 @@ const cookieSession = require('cookie-session')
 const morgan = require("morgan");
 const bcrypt = require("bcryptjs");
 
+const { getUserByEmail } = require('./helpers') 
 
 
 const urlDatabase = {
@@ -55,14 +56,6 @@ const generateRandomString = () => {
   return result;
  };
 
-const getUserByEmail = function(email) {
-  for(let key in users) {
-    if(users[key].email === email) {
-         return users[key]
-    }
-  }
-  return null
-}
 
 const urlsForUser = function(id) {
  let  urls = {}
@@ -251,13 +244,13 @@ app.post('/login', (req, res) => {
     return res.status(403).send("E-mail or password are empty")
   }
 
-  const userExists = getUserByEmail(email);
+  const userExists = getUserByEmail(email, users);
 
   if(userExists === null) { //check to change to just if(!userExists)
     return res.status(403).send('User was not found')
   }
 
-  const result = bcrypt.compareSync('qaz', userExists.password);
+  const result = bcrypt.compareSync(password, userExists.password);
   if(!result) {
     return res.status(403).send('Password is incorrect')
   }
@@ -298,14 +291,14 @@ app.post('/register', (req, res) => {
     return res.status(400).send('E-mail or password are empty')
   }
 
-  const userExists = getUserByEmail(email)
+  const userExists = getUserByEmail(email, users)
 
   if(userExists !== null) {
     return res.status(400).send('E-mail already exists')
   }
  
   
-  users[id] = {id: id, email: email, password: hashedPassword };
+  users[id] = {id: id, email: email, password: hashedPassword }; 
 
   req.session.userId = id; 
   req.session.email = email; 
