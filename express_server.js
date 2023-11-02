@@ -154,6 +154,7 @@ app.get("/urls/:id", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
+
 // Get request to register form
 app.get("/register", (req, res) => {
   const id = req.cookies.userId;
