@@ -25,8 +25,19 @@ const users = {
 const generateRandomString = () => {
   const result = Math.random().toString(36).substring(5);//set of [0-9,A-Z]
   return result;
+ };
+
+const getUserByEmail = function(email) {  
+  for(let key in users) {
+    if(users[key].email === email) {
+      console.log(users[key].email);
+      return users[key]
+    }
+  
  
-};
+  }
+  return null
+}
 
 // config
 app.use(express.urlencoded({ extended: true }));
@@ -135,7 +146,7 @@ app.post('/logout', (req, res) => {
   const user = users[req.cookies.user_id]
   const templateVars = { user };
     // res.clearCookie("username", username);
-    
+
   res.redirect('/urls');
 });
 
@@ -146,12 +157,23 @@ app.post('/register', (req, res) => {
   const id = generateRandomString();
   const email = req.body.email;
   const password = req.body.password;
-  users[id] = {id: id, email: email, password: password };
- 
+
+  if(email === "" || password === "") {
+    return res.send('400 status code: e-mail or password are empty')
+  }
+
+  const userExists = getUserByEmail(email)
+
+  if(userExists !== null) {
+    return res.send('400 status code: e-mail already exists')
+  }
   
+ 
+  users[id] = {id: id, email: email, password: password };
   res.cookie("user_id", id);
   res.cookie("email", email);
   res.cookie("password", password);
+
   res.redirect('/urls');
 });
 
