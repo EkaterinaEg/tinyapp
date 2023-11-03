@@ -37,7 +37,7 @@ const urlDatabase = {
 
 const users = {
   aJ4: {
-    id: "aJ4",//for testing purposes
+    id: "aJ4",
     email: "user@example.com",
     password: "$2a$10$TfUThAL/OhKap97kNuGigOeoXTG2zDKBTCez0LsvrMC/iBQpQC71.",
   },
@@ -51,7 +51,7 @@ const users = {
 
 //generate random id
 const generateRandomString = () => {
-  const result = Math.random().toString(36).substring(2,8);//set of [0-9,A-Z]
+  const result = Math.random().toString(36).substring(2,8);
   return result;
  };
 
@@ -102,8 +102,7 @@ app.get("/hello", (req, res) => {
 app.get("/urls", (req, res) => {
   const id = req.session.userId;
   const user = users[id];
-  console.log("id: ",id);
-console.log(user);
+  
   if(!user) {
     return res.send("Please <a href='/login'>Login</a> or <a href='/register'>Register</a>")
   }
@@ -265,8 +264,8 @@ app.post('/login', (req, res) => {
 
   const userExists = getUserByEmail(email, users);
 
-  console.log(userExists);
-  if(!userExists) { //check to change to just if(!userExists)
+
+  if(!userExists) { 
     return res.status(403).send('User was not found')
   }
 
